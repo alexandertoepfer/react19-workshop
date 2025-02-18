@@ -1,50 +1,76 @@
-import { logRender, useLogRenderDone } from "./log-render.ts";
+import React from "react";
+import "./main.css";
 
-type PostPreviewProps = {
-  title: string;
-  body: string;
-  onClear: () => void;
-};
-export default function PostPreview({ title, body, onClear }: PostPreviewProps) {
-  logRender("PostPreview");
-  useLogRenderDone();
-  return (
-    <div>
-      <h2>Preview of your new post: </h2>
-      <Label label={"Title:"}></Label>
-      <Title title={title} />
-      <Label label={"Body:"}></Label>
-      <Body body={body} />
-      <Button onClick={onClear} label={"Clear"} />
+export interface PostPreviewProps {
+  currentPost: {
+    id?: string;
+    title: string;
+    body: string;
+    likes: number;
+    date: string;
+    tags?: string[];
+    published?: boolean;
+    userId?: string;
+  };
+  draftTags: string[];
+}
+
+const PostPreview: React.FC<PostPreviewProps> = ({ currentPost, draftTags, userNames }) => {
+  return currentPost.id || currentPost.title ? (
+    <div className="card mt-3">
+      <div className="card-header">
+        <h5 className="mb-0">
+          <i className="fa-solid fa-magnifying-glass me-2"></i>Preview
+        </h5>
+      </div>
+      <div className="card-body">
+        <div className="list-group-item list-group-item-action flex-column align-items-start">
+          <div className="d-flex w-100 justify-content-between">
+            <h5 className="mb-1">
+              <i className="fa-solid fa-message me-2 text-primary"></i>
+              {currentPost.title || "Post Title"}
+            </h5>
+            <small className="ml-2" style={{ textAlign: "end" }}>
+              {currentPost.id && (
+                <span style={{ marginRight: "10px" }}>
+                  <i className="fa-solid fa-fingerprint me-1"></i>
+                  {currentPost.id}
+                </span>
+              )}
+              <i className="fas fa-heart text-danger me-1"></i>
+              {currentPost.likes} | {new Date().toLocaleString()}{" "}
+              {currentPost.userId && (
+                <span style={{ whiteSpace: "nowrap" }}>
+                  <i className="fa-solid fa-user me-1"></i>
+                  {userNames[currentPost.userId] || "N/A"}
+                </span>
+              )}
+            </small>
+          </div>
+          <p className="mb-3">
+            {currentPost.body || "Post content preview..."}
+          </p>
+          {draftTags && draftTags.length > 0 && (
+            <p>
+              <i className="fas fa-tags me-1"></i>
+              <b>Tags:</b> {draftTags.join(", ")}
+            </p>
+          )}
+          {currentPost.published !== undefined && (
+            <p>
+              <i className="fa-solid fa-magnifying-glass me-1"></i>
+              <b>Published:</b>{" "}
+              {currentPost.published ? "Yes" : "No"}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="mt-2">
+      <span>N/A</span>
     </div>
   );
-}
+};
 
-// ---- NOTE:
-//   - this should be a "simulation" of "real" components in a component library
-//   - complexity or meaningfullnes doesn't matter here, we just need a bunch of components
-//   - you will also NEVER do things like 'logRender' oder 'useLogRenderDone' in your
-//     application. There are better ways, this is just for simplifaction here
-
-function Label({ label }: { label: string }) {
-  logRender("Label");
-  return <label>{label}</label>;
-}
-
-function Body({ body }: { body: string }) {
-  logRender("Body");
-  return <div>{body}</div>;
-}
-function Title({ title }: { title: string }) {
-  logRender("Title");
-  return <div>{title}</div>;
-}
-
-function Button({ label, onClick }: { label: string; onClick: () => void }) {
-  logRender("Button");
-  return (
-    <button onClick={onClick} className={"Button"}>
-      {label}
-    </button>
-  );
-}
+export default PostPreview;

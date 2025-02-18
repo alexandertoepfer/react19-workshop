@@ -1,11 +1,9 @@
-import PostEditorPage from "./PostEditor.tsx";
-import PostListPage from "./PostListPage.tsx";
+import PostPage from "./PostPage.tsx";
 
 export default function App() {
   return (
     <>
-      <PostEditorPage />
-      <PostListPage />
+      <PostPage />
     </>
   );
 }

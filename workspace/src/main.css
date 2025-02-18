@@ -1,0 +1,43 @@
+/* Bootstrap */
+
+:root {
+  --color-primary: dodgerblue;
+}
+
+#root {
+  max-width: 1147px;
+}
+
+label {
+  margin-bottom: 0;
+}
+
+textarea.form-control:hover {
+  background-color: var(--color-white);
+}
+
+p {
+  margin-bottom: 0.5rem !important;
+}
+
+.btn:disabled:hover {
+  color: #fff !important;
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  cursor: not-allowed !important;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  color: black !important;
+}
+
+.form-check-input[type=checkbox],
+.form-check-input[type=radio] {
+  transform: scale(0.9);
+}
+
+.form-group {
+  padding-bottom: 1rem;
+}
+
+/* Unique */

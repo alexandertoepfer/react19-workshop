@@ -98,7 +98,8 @@ function updatePost(postData) {
   const updatedPost = {
     ...post,
     title: postData.title,
-    body: postData.body
+    body: postData.body,
+    tags: postData.tags
   };
 
   posts.set(post.id, updatedPost);

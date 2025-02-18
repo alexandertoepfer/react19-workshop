@@ -1,12 +1,14 @@
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const bodyParser = require("body-parser");
-
+const cors = require("cors");
 const datastore = require("./datastore");
 
 const app = express();
 
-const authEnabled = process.env.USE_AUTH === "true";
+app.use(cors({ origin: "http://localhost:3000" }));
+
+const authEnabled = true;
 const slowEnabled = process.env.USE_SLOW === "true";
 
 /** IN REAL LIVE YOU WILL NEVER STORE JWT_SECRET IN YOUR CODE! */
@@ -235,6 +237,10 @@ app.get("/posts/:id/metadata", (req, res) => {
 });
 
 app.post("/posts", (req, res) => {
+  console.log("req");
+  console.log(req);
+  console.log("res");
+  console.log(res);
   if (authEnabled && !req.user) {
     return res.status(401).json({ error: "You must be logged in to execute this action" });
   }
@@ -350,7 +356,7 @@ app.listen(port, () => {
   const authHints = authEnabled
     ? `
     🚓    Auth Mode is enabled
-    🔑    Auth-Header: 'Authorization: ${tokenFor("U2")}'`
+    🔑    Auth-Header: 'Authorization: ${tokenFor("U0")}'`
     : "";
 
   console.log(`

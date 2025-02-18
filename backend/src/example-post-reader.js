@@ -22,7 +22,7 @@ INSERT INTO posts (user_id, title, date, body) VALUES (${sqlString(
       currentPost.userId
     )}, ${sqlString(currentPost.title)}, ${sqlString(currentPost.date)}, ${sqlString(
       currentPost.body
-    )});    
+    )});
     `;
     currentPost = newPost();
   };
@@ -69,6 +69,7 @@ INSERT INTO posts (user_id, title, date, body) VALUES (${sqlString(
 
 function readUsers() {
   return [
+    { id: "U0", login: "alex", name: "Alexander Töpfer"},
     { id: "U1", login: "nils", name: "Nils Hartmann" },
     { id: "U2", login: "susi", name: "Susi Mueller" },
     { id: "U3", login: "klaus", name: "Klaus Schneider" },

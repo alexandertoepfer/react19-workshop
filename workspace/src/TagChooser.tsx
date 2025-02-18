@@ -1,45 +1,130 @@
-import { useState } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
+import "./main.css";
 
-export default function TagChooser() {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+interface TagChooserProps {
+  title: string;
+  /** The list of all available tags (e.g., known tags + ones added) */
+  availableTags: string[];
+  /** The list of currently selected tags */
+  selectedTags: string[];
+  /** Callback to update the selected tags */
+  onTagsChange: (newTags: string[]) => void;
+}
 
-  function handleSelectTag(tag: string) {
-    // If the clicked tag is already in the list of selected tags,
-    // it must be removed from the list,
-    // if it is not yet present, it must be added to the list.
+const TagChooser = forwardRef(function TagChooser(
+  { title, availableTags, selectedTags, onTagsChange }: TagChooserProps,
+  ref
+) {
+  // Local state for the "new tag" input only
+  const [newTag, setNewTag] = useState("");
 
-    const newSelection = selectedTags.includes(tag)
-      ? selectedTags.filter(t => t !== tag)
-      : selectedTags.concat(tag);
+  // Expose a method for the parent to get the final tags
+  useImperativeHandle(
+    ref,
+    () => ({
+      getFinalTags() {
+        return selectedTags;
+      },
+    }),
+    [selectedTags]
+  );
 
-    setSelectedTags(newSelection);
+
+  function handleToggleCheckbox(tag: string) {
+    if (selectedTags.includes(tag)) {
+      onTagsChange(selectedTags.filter((t) => t !== tag));
+    } else {
+      onTagsChange([...selectedTags, tag]);
+    }
+  }
+
+  function handleAddTag() {
+    const trimmed = newTag.trim();
+    if (!trimmed) return;
+
+    // If not already selected, add the tag (which will also update the available list in the parent)
+    if (!selectedTags.includes(trimmed)) {
+      onTagsChange([...selectedTags, trimmed]);
+    }
+    setNewTag("");
   }
 
   return (
     <div>
-      <h2>TODO: title aus Properties einsetzen</h2>
-      <div className={"TagChooser__tags"}>
-        {/*
+      <label style={{ marginBottom: "0" }}>
+        <i className="fas fa-tags me-1"></i>
+        <b>{title}</b>
+      </label>
 
-// TODO: Iterate over the "availableTags" list using the map function,
-//       which is passed as a property to the TagChooser component,
-//       and create a checkbox for each tag.
-//         availableTags.map(t => ...)
-//
-//       - At the top level, a <label> should be rendered
-//         - You need to set the key property (e.g., to the current tag)
-//         - The label element should have two children (<label><input ...>TAG_NAME</label>):
-//           - 1. An input field with the following properties:
-//               - 'type="checkbox"'
-//               - 'checked': must be true if the current tag (t) is present
-//                 in the list of selected tags ('selectedTags')
-//               - 'onChange': should call the function 'handleSelectTag'
-//                 with the current tag (t)
-//           - 2. The name of the current tag
-
-
-        */}
+      {/* "Add new tag" input field + button */}
+      <div className="input-group mt-1" style={{ width: "100%" }}>
+        <input
+          type="text"
+          className="form-control"
+          value={newTag}
+          onChange={(e) => setNewTag(e.target.value)}
+        />
+        <div className="input-group-append">
+          <button
+            className="btn btn-outline-primary"
+            type="button"
+            onClick={handleAddTag}
+            style={{
+              boxShadow: "none",
+              borderRadius: "0% 0.375rem 0.375rem 0%",
+            }}
+          >
+            <i className="fas fa-plus"></i> <b>Add</b>
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* List of available tags with checkboxes */}
+        {availableTags.length === 0 ? (
+          <div
+            className="row pr-2 pl-2 mt-2"
+            style={{ marginBottom: "1rem" }}
+          >
+          <span style={{ color: "var(--color-main)" }}>
+            N/A
+          </span>
+          </div>
+        ) : (
+          <>
+          <div className="container" style={{ width: "95%" }}>
+          <div
+            className="row pr-2 pl-2 mt-2"
+            style={{ marginBottom: "1rem" }}
+          >
+          {availableTags.map((tag) => (
+            <div
+              className="col-12 col-sm-6 col-md-4 col-lg-3"
+              key={tag}
+            >
+              <div className="form-check mb-2">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id={`checkbox-${tag}`}
+                  checked={selectedTags.includes(tag)}
+                  onChange={() => handleToggleCheckbox(tag)}
+                />
+                <label
+                  className="form-check-label"
+                  style={{ whiteSpace: "nowrap" }}
+                  htmlFor={`checkbox-${tag}`}
+                >
+                  {tag}
+                </label>
+              </div>
+            </div>
+          ))}
+          </div>
+          </div>
+          </>
+        )}
+        </div>
   );
-}
+});
+
+export default TagChooser;
